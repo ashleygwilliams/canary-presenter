@@ -30,19 +30,14 @@
 <%= asthmaData.json_obj["data"][10] %>
 <h2> Neighborhood Data </h2>
 <% neighborhoods = {} %>
-<ul>
   <% neighborhoodData.json_obj["areas"].each do |area| %>
-      <li>
-        <h2><%= area["name"] %></h2>
-        <h3><%= area["subtitle"] %></h3>
-        <p><%= Polylines::Decoder.decode_polyline("#{area["boundary_encoded_points_string"]}") %></p>
-        <p><%= area["city"] %></p>
-      </li>
     <% if area["boundary_encoded_points_string"] %>
-      <% neighborhoods["#{area["name"]}"] = Polylines::Decoder.decode_polyline("#{area["boundary_encoded_points_string"]}") %>
+      <% neighborhoods["#{area["name"]}"] = {} %>
+      <% neighborhoods["#{area["name"]}"]["boundary_points"] = Polylines::Decoder.decode_polyline("#{area["boundary_encoded_points_string"]}") %>
+      <% neighborhoods["#{area["name"]}"]["score"] = rand(1000) %>
     <% end %>
   <% end %>
-</ul>
+<%= neighborhoods %>
 <script type="text/javascript" charset="utf-8">
   var map = L.map('map').setView([40.7142, -74.0064], 11);
   function getColor(d) {
@@ -74,8 +69,8 @@
   <% rev_neighborhoods = Hash[neighborhoods.to_a.reverse] %>
   <% rev_neighborhoods.each do |key, value| %>
     var polygon = L.polygon([
-      <%= value %>
-    ], {color: getColor(Math.floor(Math.random()*1000))}).addTo(map);
+      <%= value["boundary_points"] %>
+    ], {color: getColor( <%=value["score"] %>)}).addTo(map);
     polygon.bindPopup("<%= key %>");
   <% end %>
 </script>
