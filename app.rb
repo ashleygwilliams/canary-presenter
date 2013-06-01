@@ -22,4 +22,8 @@ class BigApp < Sinatra::Application
   get "/stylesheet.css" do
     erb :styles, :layout => false
   end
+
+  get '/socket' do
+    erb :socket
+  end
 end

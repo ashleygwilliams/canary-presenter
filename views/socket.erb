@@ -1,0 +1,27 @@
+<div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <!-- Be sure to leave the brand out there if you want it shown -->
+      <a class="brand" href="#">Canary</a>
+    </div>
+  </div>
+</div>
+<h2></h2>
+<script src="http://smokeconnector.nodejitsu.com/socket.io/socket.io.js"></script>
+
+<script>
+  var socket = io.connect('http://smokeconnector.nodejitsu.com:80');
+  
+          socket.on('connect',function(){
+              console.log("connected server");
+          });
+
+
+  socket.on('testSock',function(data) {
+              console.log('Number: ',data.number,'Zip: ',data.zip);
+          });
+
+
+</script>
+
+
