@@ -38,6 +38,7 @@
     <% end %>
   <% end %>
 <%= neighborhoods %>
+<script src="http://smokeconnector.nodejitsu.com/socket.io/socket.io.js"></script>
 <script type="text/javascript" charset="utf-8">
   var map = L.map('map').setView([40.7142, -74.0064], 11);
   function getColor(d) {
@@ -73,4 +74,46 @@
     ], {color: getColor( <%=value["score"] %>)}).addTo(map);
     polygon.bindPopup("<%= key %>");
   <% end %>
+	function map_point(coords){
+		var marker = L.marker(coords).addTo(map);
+		console.log(coords);
+		console.log(map);
+		console.log('MAP');
+	}
+	var geocoder = new google.maps.Geocoder();;
+	function codeAddress(zip) {
+  		var address = zip;
+  		geocoder.geocode( { 'address': address}, function(results, status) {
+    	if (status == google.maps.GeocoderStatus.OK) {
+      		//map.setCenter(results[0].geometry.location);
+      		//var marker = new google.maps.Marker({
+          		//map: map,
+          		//position: results[0].geometry.location
+      		//});
+  			var coords = [];
+  			coords[0] = results[0].geometry.location.jb;
+  			coords[1] = results[0].geometry.location.kb;
+  			console.log(coords[0] + ", " + coords[1]);
+  			map_point(coords);
+    	} else {
+      	alert('Geocode was not successful for the following reason: ' + status);
+    	}
+  		});
+	}
+
+  	var socket = io.connect('http://smokeconnector.nodejitsu.com:80');
+  
+          socket.on('connect',function(){
+              console.log("connected server");
+          });
+
+
+  socket.on('testSock',function(data) {
+        console.log('Number: ',data.number,'Zip: ',data.zip);
+        //map_point([40.714224,-73.961452]);
+        console.log(data.zip);
+        codeAddress("10001");
+          });
+
+
 </script>

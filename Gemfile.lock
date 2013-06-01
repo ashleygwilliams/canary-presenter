@@ -1,6 +1,7 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    geocoder (1.1.8)
     multi_json (1.7.3)
     nokogiri (1.5.9)
     polylines (0.1.1)
@@ -19,6 +20,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  geocoder
   multi_json
   nokogiri
   polylines

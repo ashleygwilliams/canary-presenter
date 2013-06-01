@@ -4,6 +4,7 @@ gem 'sinatra'
 gem 'nokogiri'
 gem 'multi_json'
 gem 'polylines'
+gem "geocoder"
 
 group :development do
   gem 'shotgun'
