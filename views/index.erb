@@ -74,27 +74,28 @@
     ], {color: getColor( <%=value["score"] %>)}).addTo(map);
     polygon.bindPopup("<%= key %>");
   <% end %>
-	function map_point(coords){
+	function map_point(coords, phnum, lang){
 		var marker = L.marker(coords).addTo(map);
+		marker.bindPopup(phnum + ": " + lang).openPopup();
 		console.log(coords);
 		console.log(map);
 		console.log('MAP');
 	}
 	var geocoder = new google.maps.Geocoder();;
-	function codeAddress(zip) {
-  		var address = zip;
+	function codeAddress(data) {
+  		var address = data.zip;
   		geocoder.geocode( { 'address': address}, function(results, status) {
     	if (status == google.maps.GeocoderStatus.OK) {
       		//map.setCenter(results[0].geometry.location);
       		//var marker = new google.maps.Marker({
-          		//map: map,
+          		//map: map, 
           		//position: results[0].geometry.location
       		//});
   			var coords = [];
   			coords[0] = results[0].geometry.location.jb;
   			coords[1] = results[0].geometry.location.kb;
   			console.log(coords[0] + ", " + coords[1]);
-  			map_point(coords);
+  			map_point(coords, data.number, data.lang);
     	} else {
       	alert('Geocode was not successful for the following reason: ' + status);
     	}
@@ -108,11 +109,11 @@
           });
 
 
-  socket.on('testSock',function(data) {
+  	socket.on('newContact',function(data) {
         console.log('Number: ',data.number,'Zip: ',data.zip);
         //map_point([40.714224,-73.961452]);
-        console.log(data.zip);
-        codeAddress("10001");
+        console.log(data);
+        codeAddress(data);
           });
 
 
