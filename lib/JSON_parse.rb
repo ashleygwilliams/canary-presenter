@@ -5,8 +5,8 @@ class JSON_parse
     JSON_parse.new()
   end
 
-  def initialize
-    json_txt = JSON_parse.load_file
+  def initialize(dataset)
+    json_txt = JSON_parse.load_file(dataset)
     @json_obj = MultiJson.decode(json_txt)
     @map_obj = json_txt
   end
@@ -14,8 +14,8 @@ class JSON_parse
 
   private
 
-  def self.load_file
-    filename = File.join('data', "neighborhoods.json")
+  def self.load_file(file_name)
+    filename = File.join('data', file_name + ".json")
     File.open(filename, 'r').read
   end
 

@@ -1,4 +1,4 @@
-<% myData = JSON_parse.new %>
+<% neighborhoodData = JSON_parse.new("neighborhoods") %>
 <% myEncoder = PolylineEncoder.new %>
 <div class="navbar">
   <div class="navbar-inner">
@@ -27,7 +27,7 @@
 <h2>Leaderboard</h2>
 <% neighborhoods = {} %>
 <ul>
-  <% myData.json_obj["areas"].each do |area| %>
+  <% neighborhoodData.json_obj["areas"].each do |area| %>
       <li>
         <h2><%= area["name"] %></h2>
         <h3><%= area["subtitle"] %></h3>
