@@ -1,4 +1,5 @@
 <% neighborhoodData = JSON_parse.new("neighborhoods") %>
+<% asthmaData = JSON_parse.new("fabj-6qv3") %>
 <% myEncoder = PolylineEncoder.new %>
 <div class="navbar">
   <div class="navbar-inner">
@@ -25,6 +26,9 @@
 <h2>Neighborhood Air Quality Map</h2>
 <div id="map"></div>
 <h2>Leaderboard</h2>
+<h2> Asthma Data </h2>
+<%= asthmaData.json_obj["data"][10] %>
+<h2> Neighborhood Data </h2>
 <% neighborhoods = {} %>
 <ul>
   <% neighborhoodData.json_obj["areas"].each do |area| %>
@@ -39,10 +43,8 @@
     <% end %>
   <% end %>
 </ul>
-<%= neighborhoods %>
 <script type="text/javascript" charset="utf-8">
-  var map = L.map('map').setView([40.7142, -74.0064], 13);
-
+  var map = L.map('map').setView([40.7142, -74.0064], 11);
   function getColor(d) {
     return d > 1000 ? '#800026' :
            d > 500  ? '#BD0026' :
