@@ -1,7 +1,7 @@
 <% neighborhoodData = JSON_parse.new("neighborhoods") %>
 <% asthmaData = JSON_parse.new("fabj-6qv3") %>
 <% myEncoder = PolylineEncoder.new %>
-<% myRand = RandomGaussian.new(100, 50) %>
+<% myRand = RandomGaussian.new(150, 50) %>
 <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
@@ -58,12 +58,12 @@
 <script type="text/javascript" charset="utf-8">
   var map = L.map('map').setView([40.7142, -74.0064], 11);
   function getColor(d) {
-    return d > 1000 ? '#800026' :
-           d > 500  ? '#BD0026' :
+    return d > 500 ? '#800026' :
+           d > 300  ? '#BD0026' :
            d > 200  ? '#E31A1C' :
-           d > 100  ? '#FC4E2A' :
-           d > 50   ? '#FD8D3C' :
-           d > 20   ? '#FEB24C' :
+           d > 150  ? '#FC4E2A' :
+           d > 100   ? '#FD8D3C' :
+           d > 50   ? '#FEB24C' :
            d > 10   ? '#FED976' :
                       '#FFEDA0';
   }
