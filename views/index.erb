@@ -1,7 +1,7 @@
 <% neighborhoodData = JSON_parse.new("neighborhoods") %>
 <% asthmaData = JSON_parse.new("fabj-6qv3") %>
 <% myEncoder = PolylineEncoder.new %>
-<% myRand = RandomGaussian.new(150, 50) %>
+<% myRand = RandomGaussian.new(90, 50) %>
 <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
@@ -153,7 +153,7 @@ var legend = L.control({position: 'bottomright'});
 legend.onAdd = function (map) {
 
     var div = L.DomUtil.create('div', 'info legend'),
-        grades = [0, 10, 50, 100, 150, 200, 300, 500],
+        grades = [0, 50, 100, 150, 200, 300, 500],
         labels = [];
 
     // loop through our density intervals and generate a label with a colored square for each interval
