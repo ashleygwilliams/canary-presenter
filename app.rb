@@ -19,10 +19,6 @@ class BigApp < Sinatra::Application
     erb :index
   end
 
-  get '/prettymap' do
-    erb :prettymap
-  end
-
   get "/stylesheet.css" do
     erb :styles, :layout => false
   end
