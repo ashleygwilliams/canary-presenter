@@ -1,4 +1,8 @@
-h1, h2, .brand {
+h1, h2, h3, .brand {
   font-family: "Arvo", Helvetica, Arial, sans-serif;
   text-align: center;
+}
+h3 {
+  color: gray;
+  line-height: 1em;
 }

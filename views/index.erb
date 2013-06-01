@@ -24,20 +24,31 @@
   </div>
 </div>
 <h2>Neighborhood Air Quality Map</h2>
+<h2>SMS +1-407-477-6653</h2>
+<h3> with ZIPCODE and LANGUAGE</h3>
+<h3> choice of english/spanish/russian</h3>
 <div id="map"></div>
-<h2>Leaderboard</h2>
-<h2> Asthma Data </h2>
-<%= asthmaData.json_obj["data"][10] %>
 <h2> Neighborhood Data </h2>
 <% neighborhoods = {} %>
   <% neighborhoodData.json_obj["areas"].each do |area| %>
     <% if area["boundary_encoded_points_string"] %>
       <% neighborhoods["#{area["name"]}"] = {} %>
       <% neighborhoods["#{area["name"]}"]["boundary_points"] = Polylines::Decoder.decode_polyline("#{area["boundary_encoded_points_string"]}") %>
-      <% neighborhoods["#{area["name"]}"]["score"] = rand(1000) %>
+      <% neighborhoods["#{area["name"]}"]["score"] = rand(500) %>
     <% end %>
   <% end %>
-<%= neighborhoods %>
+ <table>
+<% neighborhoods.each do |key, value| %>
+	<tr>
+		<td>
+			<%= key %>
+		</td>
+		<td>
+			<%= value["score"] %>
+		</td>
+	<tr>
+<% end %>
+</table>
 <script src="http://smokeconnector.nodejitsu.com/socket.io/socket.io.js"></script>
 <script type="text/javascript" charset="utf-8">
   var map = L.map('map').setView([40.7142, -74.0064], 11);
@@ -72,7 +83,7 @@
     var polygon = L.polygon([
       <%= value["boundary_points"] %>
     ], {color: getColor( <%=value["score"] %>)}).addTo(map);
-    polygon.bindPopup("<%= key %>");
+    polygon.bindPopup("<%= key + ": " + value["score"].to_s%>" + "<br/>" + getQuality(<%= value["score"]%>));
   <% end %>
 	function map_point(coords, phnum, lang){
 		var marker = L.marker(coords).addTo(map);
@@ -102,6 +113,22 @@
   		});
 	}
 
+	function getQuality(score){
+		if (score > 300) {
+			return "Hazardous";
+		} else if (score > 200) {
+			return "Very Unhealthy";
+		} else if (score > 150) {
+			return "Unhealthy";
+		} else if (score > 100) {
+			return "Unhealthy for Sensitive Groups";
+		} else if (score > 50) {
+			return "Moderate";
+		} else {
+			return "Good";
+		};
+	}
+
   	var socket = io.connect('http://smokeconnector.nodejitsu.com:80');
   
           socket.on('connect',function(){
@@ -115,6 +142,7 @@
         console.log(data);
         codeAddress(data);
           });
+
 
 
 </script>

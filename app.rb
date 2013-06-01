@@ -26,4 +26,8 @@ class BigApp < Sinatra::Application
   get '/socket' do
     erb :socket
   end
+
+  get '/scraper' do
+    erb :scraper
+  end
 end
