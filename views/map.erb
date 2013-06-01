@@ -1,0 +1,132 @@
+<% neighborhoodData = JSON_parse.new("neighborhoods") %>
+<% asthmaData = JSON_parse.new("fabj-6qv3") %>
+<% myEncoder = PolylineEncoder.new %>
+<% myRand = RandomGaussian.new(90, 50) %>
+<div id="map"></div>
+<% neighborhoods = {} %>
+  <% neighborhoodData.json_obj["areas"].each do |area| %>
+    <% if area["boundary_encoded_points_string"] %>
+      <% neighborhoods["#{area["name"]}"] = {} %>
+      <% neighborhoods["#{area["name"]}"]["boundary_points"] = Polylines::Decoder.decode_polyline("#{area["boundary_encoded_points_string"]}") %>
+      <% score = myRand.rand %>
+      <% if score < 0 %>
+      <% score = score * -1 %>
+      <% end %>
+      <% neighborhoods["#{area["name"]}"]["score"] = score %>
+    <% end %>
+  <% end %>
+<script src="http://smokeconnector.nodejitsu.com/socket.io/socket.io.js"></script>
+<script type="text/javascript" charset="utf-8">
+  var map = L.map('map').setView([40.7142, -74.0064], 11);
+  function getColor(d) {
+    return d > 500 ? '#800026' :
+           d > 300  ? '#BD0026' :
+           d > 200  ? '#E31A1C' :
+           d > 150  ? '#FC4E2A' :
+           d > 100   ? '#FD8D3C' :
+           d > 50   ? '#FEB24C' :
+           d > 10   ? '#FED976' :
+                      '#FFEDA0';
+  }
+
+  function style(feature) {
+    return {
+        fillColor: getColor(),
+        weight: 2,
+        opacity: 1,
+        color: 'white',
+        dashArray: '3',
+        fillOpacity: 0.7
+    };
+}
+
+  L.tileLayer('http://tile.stamen.com/toner/{z}/{x}/{y}.png', {attribution: 'Stamen Toner'}, {
+      attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>',
+      maxZoom: 18
+  }).addTo(map);
+  <% rev_neighborhoods = Hash[neighborhoods.to_a.reverse] %>
+  <% rev_neighborhoods.each do |key, value| %>
+    var polygon = L.polygon([
+      <%= value["boundary_points"] %>
+    ], {color: getColor( <%=value["score"] %>)}).addTo(map);
+    polygon.bindPopup("<%= key + ": " + value["score"].to_s%>" + "<br/>" + getQuality(<%= value["score"]%>));
+  <% end %>
+	function map_point(coords, phnum, lang){
+		var marker = L.marker(coords).addTo(map);
+		marker.bindPopup(phnum + ": " + lang).openPopup();
+		console.log(coords);
+		console.log(map);
+		console.log('MAP');
+	}
+	var geocoder = new google.maps.Geocoder();;
+	function codeAddress(data) {
+  		var address = data.zip;
+  		geocoder.geocode( { 'address': address}, function(results, status) {
+    	if (status == google.maps.GeocoderStatus.OK) {
+      		//map.setCenter(results[0].geometry.location);
+      		//var marker = new google.maps.Marker({
+          		//map: map, 
+          		//position: results[0].geometry.location
+      		//});
+  			var coords = [];
+  			coords[0] = results[0].geometry.location.jb;
+  			coords[1] = results[0].geometry.location.kb;
+  			console.log(coords[0] + ", " + coords[1]);
+  			map_point(coords, data.number, data.lang);
+    	} else {
+      	alert('Geocode was not successful for the following reason: ' + status);
+    	}
+  		});
+	}
+
+	function getQuality(score){
+		if (score > 300) {
+			return "Hazardous";
+		} else if (score > 200) {
+			return "Very Unhealthy";
+		} else if (score > 150) {
+			return "Unhealthy";
+		} else if (score > 100) {
+			return "Unhealthy for Sensitive Groups";
+		} else if (score > 50) {
+			return "Moderate";
+		} else {
+			return "Good";
+		};
+	}
+
+  	var socket = io.connect('http://smokeconnector.nodejitsu.com:80');
+  
+          socket.on('connect',function(){
+              console.log("connected server");
+          });
+
+
+  	socket.on('newContact',function(data) {
+        console.log('Number: ',data.number,'Zip: ',data.zip);
+        //map_point([40.714224,-73.961452]);
+        console.log(data);
+        codeAddress(data);
+          });
+
+var legend = L.control({position: 'bottomright'});
+
+legend.onAdd = function (map) {
+
+    var div = L.DomUtil.create('div', 'info legend'),
+        grades = [0, 50, 100, 150, 200, 300, 500],
+        labels = [];
+
+    // loop through our density intervals and generate a label with a colored square for each interval
+    for (var i = 0; i < grades.length; i++) {
+        div.innerHTML +=
+            '<i style="background:' + getColor(grades[i] + 1) + '"></i> ' +
+            grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+    }
+
+    return div;
+};
+
+legend.addTo(map);
+
+</script>
