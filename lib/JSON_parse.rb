@@ -15,7 +15,7 @@ class JSON_parse
   private
 
   def self.load_file
-    filename = File.join('data/map', "neighborhoods.json")
+    filename = File.join('data', "neighborhoods.json")
     File.open(filename, 'r').read
   end
 
