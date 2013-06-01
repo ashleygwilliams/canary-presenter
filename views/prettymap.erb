@@ -1,0 +1,58 @@
+<% myData = JSON_parse.new %>
+<% myEncoder = PolylineEncoder.new %>
+<h1>MAP!</h1>
+<div id="map"></div>
+<% neighborhoods = {} %>
+<ul>
+  <% myData.json_obj["areas"].each do |area| %>
+      <li>
+        <h2><%= area["name"] %></h2>
+        <h3><%= area["subtitle"] %></h3>
+        <p><%= Polylines::Decoder.decode_polyline("#{area["boundary_encoded_points_string"]}") %></p>
+        <p><%= area["city"] %></p>
+      </li>
+    <% if area["boundary_encoded_points_string"] %>
+      <% neighborhoods["#{area["name"]}"] = Polylines::Decoder.decode_polyline("#{area["boundary_encoded_points_string"]}") %>
+    <% end %>
+  <% end %>
+</ul>
+<%= neighborhoods %>
+<script type="text/javascript" charset="utf-8">
+  var map = L.map('map').setView([40.7142, -74.0064], 13);
+  
+  function getColor(d) {
+    return d > 1000 ? '#800026' :
+           d > 500  ? '#BD0026' :
+           d > 200  ? '#E31A1C' :
+           d > 100  ? '#FC4E2A' :
+           d > 50   ? '#FD8D3C' :
+           d > 20   ? '#FEB24C' :
+           d > 10   ? '#FED976' :
+                      '#FFEDA0';
+  }
+
+  function style(feature) {
+    return {
+        fillColor: getColor(),
+        weight: 2,
+        opacity: 1,
+        color: 'white',
+        dashArray: '3',
+        fillOpacity: 0.7
+    };
+}
+
+  L.tileLayer('http://tile.stamen.com/toner/{z}/{x}/{y}.png', {attribution: 'Stamen Toner'}, { 
+      attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://cloudmade.com">CloudMade</a>',
+      maxZoom: 18
+  }).addTo(map);
+  <% rev_neighborhoods = Hash[neighborhoods.to_a.reverse] %>
+  <% rev_neighborhoods.each do |key, value| %>
+    var polygon = L.polygon([
+      <%= value %>
+    ], {color: getColor(Math.floor(Math.random()*1000))}).addTo(map);
+    polygon.bindPopup("<%= key %>");
+  <% end %>
+
+
+</script>
