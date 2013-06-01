@@ -1,6 +1,7 @@
 <% neighborhoodData = JSON_parse.new("neighborhoods") %>
 <% asthmaData = JSON_parse.new("fabj-6qv3") %>
 <% myEncoder = PolylineEncoder.new %>
+<% myRand = RandomGaussian.new(100, 50) %>
 <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
@@ -34,7 +35,11 @@
     <% if area["boundary_encoded_points_string"] %>
       <% neighborhoods["#{area["name"]}"] = {} %>
       <% neighborhoods["#{area["name"]}"]["boundary_points"] = Polylines::Decoder.decode_polyline("#{area["boundary_encoded_points_string"]}") %>
-      <% neighborhoods["#{area["name"]}"]["score"] = rand(500) %>
+      <% score = myRand.rand %>
+      <% if score < 0 %>
+      <% score = score * -1 %>
+      <% end %>
+      <% neighborhoods["#{area["name"]}"]["score"] = score %>
     <% end %>
   <% end %>
  <table>
