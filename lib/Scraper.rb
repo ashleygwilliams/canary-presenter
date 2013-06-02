@@ -10,14 +10,20 @@ class Scraper
     html = Nokogiri::HTML(download)
     tables = html.search("table")
     table = tables[0]
+    neighborhoods = []
+    zips =[]
     nzips = {}
     table.search('tr').each do |tdd|
-      nzips[tdd] = {} 
       tdd.search('td').each do |td|
-        nzips[tdd][td.text] = td.text
+        if td["headers"]== "header2"
+          neighborhoods.push(td.text.lstrip)
+        end
+        if td["headers"]== "header3"
+          zips.push(td.text.lstrip)
+        end
       end
     end
-    return nzips
+    nzips = Hash[neighborhoods.zip(zips.map {|z| z.split /, /})]
   end
 
 end

@@ -1,2 +1,5 @@
 <h1>SCRAPE TIME</h1>
-<%= Scraper::getTableData() %>
+<% data = Scraper::getTableData() %>
+<% myNZIP = NZip.new(data) %>
+<%= myNZIP.zipToHood("11211") %>
+<%= myNZIP.hoodToZip("Greenpoint") %>

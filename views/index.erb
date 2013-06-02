@@ -2,6 +2,8 @@
 <% asthmaData = JSON_parse.new("fabj-6qv3") %>
 <% myEncoder = PolylineEncoder.new %>
 <% myRand = RandomGaussian.new(90, 50) %>
+<% data = Scraper::getTableData() %>
+<% myNZIP = NZip.new(data) %>
 <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
@@ -25,9 +27,6 @@
   </div>
 </div>
 <h2>Neighborhood Air Quality Map</h2>
-<h2>SMS +1-407-477-6653</h2>
-<h3> with ZIPCODE and LANGUAGE</h3>
-<h3> choice of english/spanish/russian</h3>
 <div id="map"></div>
 <h2> Neighborhood Data </h2>
 <% neighborhoods = {} %>
@@ -43,13 +42,16 @@
     <% end %>
   <% end %>
  <table>
-<% neighborhoods.each do |key, value| %>
+<% neighborhoods.each do |hood, details| %>
 	<tr>
 		<td>
-			<%= key %>
+			<%= hood %>
 		</td>
+    <td>
+      <%= myNZIP.hoodToZip(hood) %>
+    </td>
 		<td>
-			<%= value["score"] %>
+			<%= details["score"] %>
 		</td>
 	<tr>
 <% end %>
